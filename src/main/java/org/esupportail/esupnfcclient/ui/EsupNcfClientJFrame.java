@@ -7,6 +7,7 @@ import java.awt.HeadlessException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
@@ -39,12 +40,12 @@ public class EsupNcfClientJFrame extends JFrame {
 		setLayout(new BorderLayout());
 		setTitle("EsupNfcTag - WebCam & PCSC");
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		setSize(500, 800);
-
+		setPreferredSize(new Dimension(550, 850));
 		JPanel mainPanel = new JPanel();
 		mainPanel.setPreferredSize(new Dimension(500, 800));
-
+		
 		final JFXPanel fxPanel = new JFXPanel();
+		
 		mainPanel.add(fxPanel);
 		
 		Platform.runLater(new Runnable() {
@@ -54,7 +55,9 @@ public class EsupNcfClientJFrame extends JFrame {
 		});
 
 		getContentPane().setBackground(new Color(153, 178, 178));
+		JScrollPane mainScrollPane = new JScrollPane(fxPanel);
 		getContentPane().add(mainPanel);
+		getContentPane().add(mainScrollPane);
 		pack();
 		setLocationRelativeTo(null);
 
