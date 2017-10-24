@@ -58,8 +58,6 @@ public class EncodingService {
 		String urlTest = esupNfcTagServerUrl + "/desfire-ws/?result=&numeroId="+numeroId+"&cardId="+cardId;
 		NfcResultBean nfcResultBean;
 		try{
-			String test = restTemplate.getForObject(urlTest, String.class);
-			System.err.println(test);
 			nfcResultBean = restTemplate.getForObject(urlTest, NfcResultBean.class);
 		}catch (Exception e) {
 			throw new EncodingException("rest call error for : " + urlTest + " - " + e);
