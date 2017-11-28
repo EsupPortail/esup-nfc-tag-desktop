@@ -2,9 +2,12 @@ package org.esupportail.esupnfcclient;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.esupportail.esupnfcclient.service.EncodingException;
@@ -15,7 +18,7 @@ import org.esupportail.esupnfcclient.utils.Utils;
 
 public class EsupNfcClientApplication {
 
-	private static String esupNfcTagServerUrl = "https://esup-nfc-tag.univ-ville.fr";
+	private static String esupNfcTagServerUrl;
 	
 	private final static Logger log = Logger.getLogger(EsupNfcClientApplication.class);
 
@@ -23,6 +26,18 @@ public class EsupNfcClientApplication {
 	private static EsupNcfClientJFrame esupNfcClientJFrame ;
 
 	public static void main(String... args) {
+		
+		Properties prop = new Properties();
+		InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream("esupnfctag.properties");
+		try {
+			prop.load(in);
+		} catch (IOException e1) {
+			log.error("sgcUrl not found");
+		} 
+		
+		esupNfcTagServerUrl = prop.getProperty("esupNfcTagServerUrl");
+		
+		log.info("Startup OK");
 
 		esupNfcClientJFrame = new EsupNcfClientJFrame(esupNfcTagServerUrl, getMacAddress());
 		
