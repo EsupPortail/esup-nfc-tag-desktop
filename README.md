@@ -22,7 +22,7 @@ L'application est packagée sous la forme d'un jar comprenant les dépendences :
 
 ### Logiciel
 
-L'application est prévue pour tourner avec java 8.
+L'application est prévue pour tourner avec java 8 et JavaFX.
 
 ### Materiel
 
@@ -30,7 +30,5 @@ L'application est prévue pour tourner avec java 8.
 
 ## Compilation esup-nfc-client
 
-Modifier la classe principale pour changer l'adresse url du serveur esup-nfc-tag-server
-Dans le dossier esup-nfc-client executer : mvn clean package
-
-
+Modifier src/main/resources/esupnfctag.properties pour changer l'adresse url du serveur esup-nfc-tag-server
+Puis dans le dossier esup-nfc-tag-desktop executer : mvn clean package
