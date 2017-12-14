@@ -22,7 +22,6 @@ public class EsupNfcClientApplication {
 	
 	private final static Logger log = Logger.getLogger(EsupNfcClientApplication.class);
 
-	private static EncodingService encodingService = new EncodingService(esupNfcTagServerUrl);
 	private static EsupNcfClientJFrame esupNfcClientJFrame ;
 
 	public static void main(String... args) {
@@ -36,8 +35,10 @@ public class EsupNfcClientApplication {
 		} 
 		
 		esupNfcTagServerUrl = prop.getProperty("esupNfcTagServerUrl");
-		
+		EncodingService encodingService = new EncodingService(esupNfcTagServerUrl);		
+
 		log.info("Startup OK");
+		log.info("esupNfcTagServerUrl : " + esupNfcTagServerUrl);
 
 		esupNfcClientJFrame = new EsupNcfClientJFrame(esupNfcTagServerUrl, getMacAddress());
 		

@@ -111,7 +111,7 @@ public class EncodingService {
 			
 			nfcComm = restTemplate.postForObject(url, entity, String.class);
 		}catch (Exception e) {
-			throw new EncodingException("rest call error for : " + url + " - " + e);
+		    throw new EncodingException("rest call error for : " + url, e);
 		}
 		return nfcComm;
 	}
