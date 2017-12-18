@@ -16,6 +16,7 @@ import javax.smartcardio.TerminalFactory;
 import org.apache.log4j.Logger;
 
 import jnasmartcardio.Smartcardio;
+import jnasmartcardio.Smartcardio.JnaCardException;
 import jnasmartcardio.Smartcardio.JnaPCSCException;
 
 @SuppressWarnings("restriction")
@@ -66,12 +67,16 @@ public class PcscUsbService {
 	}
 
 	public boolean isCardPresent() throws CardException{
-		for (CardTerminal terminal : terminals.list()) {
 		try {
-			if(!terminal.getName().contains("6121") && terminal.isCardPresent()) return true; 
-		} catch (CardException e) {
-			log.warn("Pas de carte");
-		}
+			for (CardTerminal terminal : terminals.list()) {
+			try {
+				if(!terminal.getName().contains("6121") && terminal.isCardPresent()) return true; 
+			} catch (CardException e) {
+				log.info("Pas de carte");
+			}
+			}
+		}catch (Exception e){
+			throw new CardException(e.getMessage());
 		}
 		return false;
 	}

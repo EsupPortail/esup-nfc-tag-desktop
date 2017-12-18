@@ -9,6 +9,10 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import javax.swing.JApplet;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import org.apache.log4j.Logger;
 import org.esupportail.esupnfcclient.service.EncodingException;
 import org.esupportail.esupnfcclient.service.EncodingService;
@@ -63,8 +67,14 @@ public class EsupNfcClientApplication {
 
 		while (true) {
 			while (true) {
+				try{
 				if (encodingService.isCardPresent() && esupNfcClientJFrame.getReadyToScan().equals("ok"))
 					break;
+				}catch (Exception e){
+					String message = "pcsc error : " + e.getMessage();
+					log.error(message);
+					errorDialog(message, "ERROR");
+				}
 				Utils.sleep(1000);
 			}
 
@@ -137,5 +147,12 @@ public class EsupNfcClientApplication {
 		}
 		return sb.toString();
 	}
+	
+	public static void errorDialog(String message, String subject){
+		JFrame frame = new JFrame();
+		JOptionPane.showMessageDialog(frame, message, subject, JOptionPane.ERROR_MESSAGE);
+		exit();
+	}
+	  
 	
 }

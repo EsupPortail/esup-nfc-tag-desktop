@@ -117,7 +117,7 @@ public class EncodingService {
 	}
 	
 
-	public boolean pcscCardOnTerminal(){
+	public boolean pcscCardOnTerminal() {
 		try {
 			return pcscUsbService.isCardOnTerminal();
 		} catch (CardException e) {
@@ -125,14 +125,8 @@ public class EncodingService {
 		}
 	}
 	
-	public boolean isCardPresent(){
-		try {
-			return pcscUsbService.isCardPresent();
-		} catch (CardException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
+	public boolean isCardPresent() throws CardException{
+		return pcscUsbService.isCardPresent();
 	}
 	
 	public void pcscDisconnect() throws PcscException{

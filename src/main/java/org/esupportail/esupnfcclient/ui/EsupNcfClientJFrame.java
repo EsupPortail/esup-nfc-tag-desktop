@@ -56,22 +56,18 @@ public class EsupNcfClientJFrame extends JFrame {
 		super();
 		this.esupNfcTagServerUrl = esupNfcTagUrl;
 		this.macAdress = adressMac;
-		setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 		setLayout(new BorderLayout());
 		setTitle("EsupNfcTag - WebCam & PCSC");
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		setPreferredSize(new Dimension(500, 800));
-		setMinimumSize(new Dimension(500, 800));
+		setPreferredSize(new Dimension(500, 850));
+		setMinimumSize(new Dimension(500, 850));
 		final JPanel mainPanel = new JPanel();
-		
 		final JFXPanel fxPanel = new JFXPanel();
 		
 		mainPanel.add(fxPanel);
 		
 		Platform.runLater(new Runnable() {
 			public void run() {
-				//initJavaFX(fxPanel, macAdress);
-				//Scene scene = createScene(macAdress);
 		        final Group  root  =  new  Group();
 		        final Scene  scene  =  new  Scene(root, javafx.scene.paint.Color.BLACK);
 		        final WebView webView = new WebView();
@@ -97,30 +93,20 @@ public class EsupNcfClientJFrame extends JFrame {
 		        });
 		        root.getChildren().add(webView);
 		        fxPanel.setScene(scene);
-		        webView.setPrefWidth(getContentPane().getWidth());
-		        webView.setPrefHeight(getContentPane().getHeight());
+		        webView.setPrefWidth(500);
+		        webView.setPrefHeight(800);
 				getContentPane().addComponentListener(new ComponentAdapter() {
 					@Override
 				    public void componentResized(ComponentEvent e) {
-						root.prefWidth(getContentPane().getWidth());
-						root.prefHeight(getContentPane().getHeight());
 				    	mainPanel.resize(getContentPane().getWidth(), getContentPane().getHeight());
 				    	fxPanel.resize(getContentPane().getWidth(), getContentPane().getHeight());
 				    	webView.setPrefWidth(getContentPane().getWidth());
-				    	webView.setPrefHeight(getContentPane().getHeight());
+				    	webView.setPrefHeight(getContentPane().getHeight() - 50);
 				    	
 				    }
 				});
 			}
 		});
-		
-		addWindowListener(new WindowAdapter() {
-			public void windowStateChanged(WindowEvent e) {
-				System.err.println("test");
-				getContentPane().resize(500, 800);				
-			}
-		});
-		
 		getContentPane().setBackground(new Color(153, 178, 178));
 		JScrollPane mainScrollPane = new JScrollPane(fxPanel);
 		getContentPane().add(mainPanel);
@@ -148,7 +134,6 @@ public class EsupNcfClientJFrame extends JFrame {
         try {
         	String version = reader.readLine();
         	log.info("jar version is : " + version);
-        	System.err.println(version);
 			return version;
 		} catch (IOException e) {
 			log.error("read version error", e);
