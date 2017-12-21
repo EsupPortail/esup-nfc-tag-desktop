@@ -1,4 +1,4 @@
-package org.esupportail.esupnfcclient;
+package org.esupportail.esupnfctagdesktop;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -9,22 +9,21 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
-import org.esupportail.esupnfcclient.service.EncodingException;
-import org.esupportail.esupnfcclient.service.EncodingService;
-import org.esupportail.esupnfcclient.service.pcsc.PcscException;
-import org.esupportail.esupnfcclient.ui.EsupNcfClientJFrame;
-import org.esupportail.esupnfcclient.utils.Utils;
+import org.esupportail.esupnfctagdesktop.service.EncodingException;
+import org.esupportail.esupnfctagdesktop.service.EncodingService;
+import org.esupportail.esupnfctagdesktop.service.pcsc.PcscException;
+import org.esupportail.esupnfctagdesktop.ui.EsupNcfClientJFrame;
+import org.esupportail.esupnfctagdesktop.utils.Utils;
 
-public class EsupNfcClientApplication {
+public class EsupNfcTagDesktopApplication {
 
 	private static String esupNfcTagServerUrl;
 	
-	private final static Logger log = Logger.getLogger(EsupNfcClientApplication.class);
+	private final static Logger log = Logger.getLogger(EsupNfcTagDesktopApplication.class);
 
 	private static EsupNcfClientJFrame esupNfcClientJFrame ;
 

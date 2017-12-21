@@ -1,4 +1,4 @@
-package org.esupportail.esupnfcclient.service;
+package org.esupportail.esupnfctagdesktop.service;
 
 public class EncodingException extends Exception {
 

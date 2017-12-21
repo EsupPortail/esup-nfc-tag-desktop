@@ -1,14 +1,14 @@
-package org.esupportail.esupnfcclient.service;
+package org.esupportail.esupnfctagdesktop.service;
 
 import javax.smartcardio.CardException;
 
 import org.apache.log4j.Logger;
-import org.esupportail.esupnfcclient.domain.CsnMessageBean;
-import org.esupportail.esupnfcclient.domain.NfcResultBean;
-import org.esupportail.esupnfcclient.service.pcsc.PcscException;
-import org.esupportail.esupnfcclient.service.pcsc.PcscUsbService;
-import org.esupportail.esupnfcclient.ui.EsupNcfClientJFrame;
-import org.esupportail.esupnfcclient.utils.Utils;
+import org.esupportail.esupnfctagdesktop.domain.CsnMessageBean;
+import org.esupportail.esupnfctagdesktop.domain.NfcResultBean;
+import org.esupportail.esupnfctagdesktop.service.pcsc.PcscException;
+import org.esupportail.esupnfctagdesktop.service.pcsc.PcscUsbService;
+import org.esupportail.esupnfctagdesktop.ui.EsupNcfClientJFrame;
+import org.esupportail.esupnfctagdesktop.utils.Utils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

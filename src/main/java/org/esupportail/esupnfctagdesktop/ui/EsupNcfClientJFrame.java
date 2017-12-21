@@ -1,4 +1,4 @@
-package org.esupportail.esupnfcclient.ui;
+package org.esupportail.esupnfctagdesktop.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

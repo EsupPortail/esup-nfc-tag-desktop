@@ -1,4 +1,4 @@
-package org.esupportail.esupnfcclient.service.pcsc;
+package org.esupportail.esupnfctagdesktop.service.pcsc;
 
 import java.security.Security;
 import java.util.ArrayList;

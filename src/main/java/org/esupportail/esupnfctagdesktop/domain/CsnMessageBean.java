@@ -1,4 +1,4 @@
-package org.esupportail.esupnfcclient.domain;
+package org.esupportail.esupnfctagdesktop.domain;
 
 public class CsnMessageBean {
 

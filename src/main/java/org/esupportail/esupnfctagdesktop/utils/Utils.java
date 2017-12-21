@@ -1,4 +1,4 @@
-package org.esupportail.esupnfcclient.utils;
+package org.esupportail.esupnfctagdesktop.utils;
 
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 

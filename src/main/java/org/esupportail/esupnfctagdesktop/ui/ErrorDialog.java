@@ -1,4 +1,4 @@
-package org.esupportail.esupnfcclient.ui;
+package org.esupportail.esupnfctagdesktop.ui;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
