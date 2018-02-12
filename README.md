@@ -32,3 +32,9 @@ L'application est prévue pour tourner avec java 8 et JavaFX.
 
 Modifier src/main/resources/esupnfctag.properties pour changer l'adresse url du serveur esup-nfc-tag-server
 Puis dans le dossier esup-nfc-tag-desktop executer : mvn clean package
+
+## Integration dans esup-nfc-tag-server
+
+Renomer le fichier  target/esupnfctagdesktop-1.0-SNAPSHOT-jar-with-dependencies.jar en esupnfctagdesktop.jar puis le copier dans le répértoire src/main/resources/jar des sources d'esup-nfc-tag-server
+
+Ensuite il faut recompiler et redéployer esup-nfc-tag-server. Au redémarrage d'esup-nfc-tag-server la nouvelle version du jar sera prise en compte
