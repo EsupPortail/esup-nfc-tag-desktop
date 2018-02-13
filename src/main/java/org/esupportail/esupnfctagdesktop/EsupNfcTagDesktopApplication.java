@@ -23,6 +23,8 @@ public class EsupNfcTagDesktopApplication {
 
 	private static String esupNfcTagServerUrl;
 	
+	private static EncodingService encodingService;
+	
 	private final static Logger log = Logger.getLogger(EsupNfcTagDesktopApplication.class);
 
 	private static EsupNcfClientJFrame esupNfcClientJFrame ;
@@ -38,7 +40,7 @@ public class EsupNfcTagDesktopApplication {
 		} 
 		
 		esupNfcTagServerUrl = prop.getProperty("esupNfcTagServerUrl");
-		EncodingService encodingService = new EncodingService(esupNfcTagServerUrl);		
+		encodingService = new EncodingService(esupNfcTagServerUrl);
 
 		log.info("Startup OK");
 		log.info("esupNfcTagServerUrl : " + esupNfcTagServerUrl);
@@ -46,26 +48,14 @@ public class EsupNfcTagDesktopApplication {
 		esupNfcClientJFrame = new EsupNcfClientJFrame(esupNfcTagServerUrl, getMacAddress());
 		
 		addJframeListerners();
+		
+		updateParams();
+		
 
-		while (true) {
-			encodingService.numeroId = esupNfcClientJFrame.getNumeroId();
-			encodingService.eppnInit = esupNfcClientJFrame.getEppnInit();
-			encodingService.authType = esupNfcClientJFrame.getAuthType();
-
-			if (encodingService.numeroId == null || encodingService.numeroId.equals("undefined")) {
-				Utils.sleep(1000);
-				continue;
-			} else {
-				break;
-			}
-		}
-		log.info("numeroId = " + encodingService.numeroId);
-		log.info("eppnInit = " + encodingService.eppnInit);
-		log.info("authType = " + encodingService.authType);
-		log.info("ready = " + esupNfcClientJFrame.getReadyToScan());
 
 		while (true) {
 			while (true) {
+				updateParams();
 				try{
 				if (encodingService.isCardPresent() && esupNfcClientJFrame.getReadyToScan().equals("ok"))
 					break;
@@ -74,7 +64,7 @@ public class EsupNfcTagDesktopApplication {
 					log.error(message);
 					errorDialog(message, "ERROR");
 				}
-				Utils.sleep(1000);
+				Utils.sleep(2000);
 			}
 
 			try {
@@ -101,6 +91,7 @@ public class EsupNfcTagDesktopApplication {
 				log.error("encoding error : " + e.getMessage(), e);
 				while (!encodingService.pcscCardOnTerminal());
 			}
+			Utils.sleep(1000);
 		}
 	}
 
@@ -112,6 +103,25 @@ public class EsupNfcTagDesktopApplication {
 		});
 	}
 
+	private static void updateParams() {
+		while (true) {
+			encodingService.numeroId = esupNfcClientJFrame.getNumeroId();
+			encodingService.eppnInit = esupNfcClientJFrame.getEppnInit();
+			encodingService.authType = esupNfcClientJFrame.getAuthType();
+
+			if (encodingService.numeroId == null || encodingService.numeroId.equals("undefined")) {
+				Utils.sleep(1000);
+				continue;
+			} else {
+				break;
+			}
+		}
+		log.trace("numeroId = " + encodingService.numeroId);
+		log.trace("eppnInit = " + encodingService.eppnInit);
+		log.trace("authType = " + encodingService.authType);
+		log.trace("ready = " + esupNfcClientJFrame.getReadyToScan());
+	}
+	
 	private static void exit() {
 		esupNfcClientJFrame.exit();
 		System.gc();
