@@ -10,7 +10,7 @@ L'application est packagée sous la forme d'un jar comprenant les dépendences :
 
 ## Fonctionalités
 
-1 - L'application esup-nfc-tag-desktop se comporte de la même manière que l'application Android [esup-nfc-tag-droid] (https://github.com/EsupPortail/esup-nfc-tag-droid "esup-nfc-tag-droid")
+1 - L'application esup-nfc-tag-desktop se comporte de la même manière que l'application Android https://github.com/EsupPortail/esup-nfc-tag-droid
 
 2 - L'application repose sur un composant webview JavaFX qui se connecte et affiche la vue fournie par esup-nfc-tag-server
 
