@@ -17,6 +17,8 @@ import org.esupportail.esupnfctagdesktop.service.EncodingException;
 import org.esupportail.esupnfctagdesktop.service.EncodingService;
 import org.esupportail.esupnfctagdesktop.service.pcsc.PcscException;
 import org.esupportail.esupnfctagdesktop.ui.EsupNcfClientJFrame;
+import org.esupportail.esupnfctagdesktop.ui.Toast;
+import org.esupportail.esupnfctagdesktop.ui.Toast.Style;
 import org.esupportail.esupnfctagdesktop.utils.Utils;
 
 public class EsupNfcTagDesktopApplication {
@@ -72,9 +74,9 @@ public class EsupNfcTagDesktopApplication {
 				String csn = encodingService.readCsn();
 				String encodingResult;
 				if (encodingService.authType.equals("CSN")) {
-					encodingResult = encodingService.csnNfcComm(csn, esupNfcClientJFrame);
+					encodingResult = encodingService.csnNfcComm(csn);
 				} else {
-					encodingResult = encodingService.desfireNfcComm(csn, esupNfcClientJFrame);
+					encodingResult = encodingService.desfireNfcComm(csn);
 				}
 				esupNfcClientJFrame.getReadyToScan();
 				if ("END".equals(encodingResult)) {
@@ -82,12 +84,15 @@ public class EsupNfcTagDesktopApplication {
 				} else {
 					log.warn("Nothing to do - message from server : " + encodingResult);
 				}
-				while (!encodingService.pcscCardOnTerminal())
-					;
+				while (!encodingService.pcscCardOnTerminal());
 				encodingService.pcscDisconnect();
 			} catch (PcscException e) {
+				Toast toast =  Toast.makeText(esupNfcClientJFrame, "pcsc error", 3000, Style.ERROR);
+				toast.display();
 				log.error("pcsc error : " + e.getMessage(), e);
 			} catch (EncodingException e) {
+				Toast toast =  Toast.makeText(esupNfcClientJFrame, "Invalid tag", 3000, Style.ERROR);
+				toast.display();
 				log.error("encoding error : " + e.getMessage(), e);
 				while (!encodingService.pcscCardOnTerminal());
 			}

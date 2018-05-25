@@ -6,11 +6,6 @@ import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.awt.event.WindowListener;
-import java.awt.event.WindowStateListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +22,7 @@ import org.apache.log4j.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -57,7 +53,7 @@ public class EsupNcfClientJFrame extends JFrame {
 		this.esupNfcTagServerUrl = esupNfcTagUrl;
 		this.macAdress = adressMac;
 		setLayout(new BorderLayout());
-		setTitle("EsupNfcTag - WebCam & PCSC");
+		setTitle("EsupNfcTagDesktop");
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setPreferredSize(new Dimension(500, 850));
 		setMinimumSize(new Dimension(500, 850));
@@ -73,10 +69,22 @@ public class EsupNcfClientJFrame extends JFrame {
 		        final WebView webView = new WebView();
 		        webEngine = webView.getEngine();
 		        webEngine.setJavaScriptEnabled(true);
-		        webEngine.load(esupNfcTagServerUrl + "/nfc-index?jarVersion=" + getJarVersion() + "&imei=appliJava&macAddress=" + macAdress);
+		        String url = esupNfcTagServerUrl + "/nfc-index?jarVersion=" + getJarVersion() + "&imei=appliJava&macAddress=" + macAdress;
+		        log.info("webVien load : " + url);
+		        webEngine.load(url);
+		        
+		        webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
+					public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
+						JSObject window = (JSObject) webEngine.executeScript("window");
+		                window.setMember("Android", new JavaScriptConsoleBridge());
+		                webEngine.executeScript("window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {Android.error(errorMsg)}");
+					}
+		        });
+		        
 		        webEngine.locationProperty().addListener(new ChangeListener<String>() {
 
 					public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+	                
 						if(newValue.length() >= 12){
 							if("download-jar".equals(newValue.substring(newValue.length() - 12))){
 								try {
@@ -98,8 +106,8 @@ public class EsupNcfClientJFrame extends JFrame {
 				getContentPane().addComponentListener(new ComponentAdapter() {
 					@Override
 				    public void componentResized(ComponentEvent e) {
-				    	mainPanel.resize(getContentPane().getWidth(), getContentPane().getHeight());
-				    	fxPanel.resize(getContentPane().getWidth(), getContentPane().getHeight());
+				    	mainPanel.setPreferredSize(new  Dimension(getContentPane().getWidth(), getContentPane().getHeight()));
+				    	fxPanel.setPreferredSize(new  Dimension(getContentPane().getWidth(), getContentPane().getHeight()));
 				    	webView.setPrefWidth(getContentPane().getWidth());
 				    	webView.setPrefHeight(getContentPane().getHeight() - 50);
 				    	

@@ -7,7 +7,6 @@ import org.esupportail.esupnfctagdesktop.domain.CsnMessageBean;
 import org.esupportail.esupnfctagdesktop.domain.NfcResultBean;
 import org.esupportail.esupnfctagdesktop.service.pcsc.PcscException;
 import org.esupportail.esupnfctagdesktop.service.pcsc.PcscUsbService;
-import org.esupportail.esupnfctagdesktop.ui.EsupNcfClientJFrame;
 import org.esupportail.esupnfctagdesktop.utils.Utils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -54,7 +53,7 @@ public class EncodingService {
 		}
 	}
 	
-	public String desfireNfcComm(String cardId, EsupNcfClientJFrame esupSGCJFrame) throws EncodingException, PcscException {
+	public String desfireNfcComm(String cardId) throws EncodingException, PcscException {
 		String urlTest = esupNfcTagServerUrl + "/desfire-ws/?result=&numeroId="+numeroId+"&cardId="+cardId;
 		NfcResultBean nfcResultBean;
 		try{
@@ -70,21 +69,25 @@ public class EncodingService {
 			while(true){
 				log.info("RAPDU : "+ result);
 				String url = esupNfcTagServerUrl + "/desfire-ws/?result="+ result +"&numeroId="+numeroId+"&cardId="+cardId;
-				nfcResultBean = restTemplate.getForObject(url, NfcResultBean.class);
-				log.info("SAPDU : "+ nfcResultBean.getFullApdu());
-				if(nfcResultBean.getFullApdu()!=null){
-				if(!"END".equals(nfcResultBean.getFullApdu()) ) {
-					try {
-						result = pcscUsbService.sendAPDU(nfcResultBean.getFullApdu());
-					} catch (CardException e) {
-						throw new PcscException("pcsc send apdu error", e);
+				try{
+					nfcResultBean = restTemplate.getForObject(url, NfcResultBean.class);
+					log.info("SAPDU : "+ nfcResultBean.getFullApdu());
+					if(nfcResultBean.getFullApdu()!=null){
+					if(!"END".equals(nfcResultBean.getFullApdu()) ) {
+						try {
+							result = pcscUsbService.sendAPDU(nfcResultBean.getFullApdu());
+						} catch (CardException e) {
+							throw new PcscException("pcsc send apdu error", e);
+						}
+					} else {
+						log.info("Encoding  : OK");
+						return nfcResultBean.getFullApdu();
 					}
-				} else {
-					log.info("Encoding  : OK");
-					return nfcResultBean.getFullApdu();
-				}
-				}else{
-					throw new EncodingException("return is null");
+					}else{
+						throw new EncodingException("return is null");
+					}
+				}catch (Exception e){
+					throw new EncodingException("Unknow exception on desfire comm", e);
 				}
 			}
 		} else {
@@ -92,8 +95,7 @@ public class EncodingService {
 		}
 	}
 	
-	public String csnNfcComm(String cardId, EsupNcfClientJFrame esupSGCJFrame) throws EncodingException, PcscException {
-		//cardId = swapPairs(hexStringToByteArray(cardId));
+	public String csnNfcComm(String cardId) throws EncodingException, PcscException {
 		CsnMessageBean nfcMsg = new CsnMessageBean();
 	    nfcMsg.setNumeroId(numeroId);
 	    nfcMsg.setCsn(cardId);
@@ -105,10 +107,7 @@ public class EncodingService {
 			jsonInString = mapper.writeValueAsString(nfcMsg);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
-
 			HttpEntity<String> entity = new HttpEntity<String>(jsonInString, headers);
-			
-			
 			nfcComm = restTemplate.postForObject(url, entity, String.class);
 		}catch (Exception e) {
 		    throw new EncodingException("rest call error for : " + url, e);
@@ -139,24 +138,6 @@ public class EncodingService {
 	}
 	
 	final protected static char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-	
-	public static String swapPairs(byte[] tagId) {
-		String s = new StringBuilder(byteArrayToHexString(tagId)).reverse().toString();
-		String even = "";
-		String odd = "";
-		int length = s.length();
-
-		for (int i = 0; i <= length-2; i+=2) {
-			even += s.charAt(i+1) + "" + s.charAt(i);
-		}
-
-		if (length % 2 != 0) {
-			odd = even + s.charAt(length-1);
-			return odd;
-		} else {
-			return even;
-		}
-	}
 	
 	public static String byteArrayToHexString(byte[] bytes) {
 		char[] hexChars = new char[bytes.length*2];

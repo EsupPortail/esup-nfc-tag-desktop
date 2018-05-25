@@ -16,7 +16,6 @@ import javax.smartcardio.TerminalFactory;
 import org.apache.log4j.Logger;
 
 import jnasmartcardio.Smartcardio;
-import jnasmartcardio.Smartcardio.JnaCardException;
 import jnasmartcardio.Smartcardio.JnaPCSCException;
 
 @SuppressWarnings("restriction")
