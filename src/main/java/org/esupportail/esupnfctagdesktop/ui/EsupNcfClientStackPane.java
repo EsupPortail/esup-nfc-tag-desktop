@@ -1,20 +1,11 @@
 package org.esupportail.esupnfctagdesktop.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.HeadlessException;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -23,54 +14,36 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 
 @SuppressWarnings("restriction")
-public class EsupNcfClientJFrame extends JFrame {
+public class EsupNcfClientStackPane extends StackPane {
 
-	private static final long serialVersionUID = 1L;
-
-	private final static Logger log = Logger.getLogger(EsupNcfClientJFrame.class);
+	private final static Logger log = Logger.getLogger(EsupNcfClientStackPane.class);
 	
 	private String esupNfcTagServerUrl;
-	
-	private String macAdress;
 	
 	private String numeroId;
 	private String eppnInit;
 	private String authType;
 	private String readyToScan;
+	
+	public WebView webView = new WebView();
+	
+	private WebEngine webEngine =webView.getEngine();
 
-	public static WebEngine webEngine;
-
-	public EsupNcfClientJFrame(String esupNfcTagUrl, String adressMac) throws HeadlessException {
-		super();
-		this.esupNfcTagServerUrl = esupNfcTagUrl;
-		this.macAdress = adressMac;
-		setLayout(new BorderLayout());
-		setTitle("EsupNfcTagDesktop");
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		setPreferredSize(new Dimension(500, 850));
-		setMinimumSize(new Dimension(500, 850));
-		final JPanel mainPanel = new JPanel();
-		final JFXPanel fxPanel = new JFXPanel();
+	public EsupNcfClientStackPane(String esupNfcTagUrl, final String macAdress) throws HeadlessException {
 		
-		mainPanel.add(fxPanel);
+		esupNfcTagServerUrl = esupNfcTagUrl;
 		
 		Platform.runLater(new Runnable() {
 			public void run() {
-		        final Group  root  =  new  Group();
-		        final Scene  scene  =  new  Scene(root, javafx.scene.paint.Color.BLACK);
-		        final WebView webView = new WebView();
-		        webEngine = webView.getEngine();
 		        webEngine.setJavaScriptEnabled(true);
 		        String url = esupNfcTagServerUrl + "/nfc-index?jarVersion=" + getJarVersion() + "&imei=appliJava&macAddress=" + macAdress;
-		        log.info("webVien load : " + url);
+		        log.info("webView load : " + url);
 		        webEngine.load(url);
 		        
 		        webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
@@ -99,29 +72,10 @@ public class EsupNcfClientJFrame extends JFrame {
 					}
 
 		        });
-		        root.getChildren().add(webView);
-		        fxPanel.setScene(scene);
-		        webView.setPrefWidth(500);
-		        webView.setPrefHeight(800);
-				getContentPane().addComponentListener(new ComponentAdapter() {
-					@Override
-				    public void componentResized(ComponentEvent e) {
-				    	mainPanel.setPreferredSize(new  Dimension(getContentPane().getWidth(), getContentPane().getHeight()));
-				    	fxPanel.setPreferredSize(new  Dimension(getContentPane().getWidth(), getContentPane().getHeight()));
-				    	webView.setPrefWidth(getContentPane().getWidth());
-				    	webView.setPrefHeight(getContentPane().getHeight() - 50);
-				    	
-				    }
-				});
 			}
 		});
-		getContentPane().setBackground(new Color(153, 178, 178));
-		JScrollPane mainScrollPane = new JScrollPane(fxPanel);
-		getContentPane().add(mainPanel);
-		getContentPane().add(mainScrollPane);
-		setLocationRelativeTo(null);
-		setVisible(true);
-		
+		StackPane webviewPane = new StackPane(webView);
+		getChildren().add(webviewPane);
 	}
     
     public void readLocalStorage(){
@@ -150,38 +104,23 @@ public class EsupNcfClientJFrame extends JFrame {
     }
     
     public String getNumeroId(){
-    	readLocalStorage();
     	return numeroId;
     }
 
     public String getEppnInit(){
-    	readLocalStorage();
     	return eppnInit;
     }
 
     public String getAuthType(){
-    	readLocalStorage();
     	return authType;
     }
     
     public String getReadyToScan(){
-    	readLocalStorage();
     	return readyToScan;
     }
         
 	public String getEsupNfcTagServerUrl() {
 		return esupNfcTagServerUrl;
-	}
-
-	public String getMacAdress() {
-		return this.macAdress;
-	}
-
-	public void setMacAdress(String macAdress) {
-		this.macAdress = macAdress;
-	}
-
-	public void exit(){
 	}
 
 }

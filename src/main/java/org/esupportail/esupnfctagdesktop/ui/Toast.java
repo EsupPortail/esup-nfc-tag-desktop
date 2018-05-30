@@ -1,194 +1,76 @@
 package org.esupportail.esupnfctagdesktop.ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.geom.RoundRectangle2D;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
+import javafx.scene.control.ProgressIndicator;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.Timer;
+@SuppressWarnings("restriction")
+public final class Toast
+{
 
+	static StackPane waitToast = new StackPane(new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS));
+	
+	public static void makeText(final EsupNcfClientStackPane ownerStackPane, String toastMsg, final int toastDelay) {
+		
+        Text text = new Text(toastMsg);
+        text.setFont(Font.font("Verdana", 40));
+        text.setFill(Color.BLACK);
 
-public class Toast extends JDialog {
-	private static final long serialVersionUID = -1602907470843951525L;
-	
-	public enum Style { NORMAL, SUCCESS, ERROR };
-	
-	public static final int LENGTH_SHORT = 3000;
-	public static final int LENGTH_LONG = 6000;
-	public static final Color ERROR_RED = new Color(121, 0, 0);
-	public static final Color SUCCESS_GREEN = new Color(22, 127, 57);
-	public static final Color NORMAL_BLACK = new Color(0, 0, 0);
-	
-	private final float MAX_OPACITY = 0.8f;
-	private final float OPACITY_INCREMENT = 0.05f;
-	private final int FADE_REFRESH_RATE = 20;
-	private final int WINDOW_RADIUS = 10;
-	private final int CHARACTER_LENGTH_MULTIPLIER = 10;
-	private final int DISTANCE_FROM_PARENT_BOTTOM = 100;	
-	
-	private JFrame mOwner;
-	private String mText;
-	private int mDuration;
-	private Color mBackgroundColor = Color.BLACK;
-	private Color mForegroundColor = Color.WHITE;
-    
-    public Toast(JFrame owner){
-    	super(owner);
-    	mOwner = owner;
-    }
+        final StackPane toast = new StackPane(text);
+        toast.setStyle("-fx-background-radius: 20; -fx-background-color: rgba(0, 0, 0, 0.3); -fx-padding: 50px;");
+        toast.setMaxWidth(toastMsg.length() * 10);
+        toast.setMaxHeight(100);
+        toast.setOpacity(0);
 
-    private void createGUI(){
-        setLayout(new GridBagLayout());
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), WINDOW_RADIUS, WINDOW_RADIUS));
-            }
-        });
+        ownerStackPane.getChildren().add(toast);
         
-        setAlwaysOnTop(true);
-        setUndecorated(true);
-        setFocusableWindowState(false);
-        setModalityType(ModalityType.MODELESS);
-        setSize(mText.length() * CHARACTER_LENGTH_MULTIPLIER, 40);
-        getContentPane().setBackground(mBackgroundColor);
-        
-        JLabel label = new JLabel(mText);
-        label.setForeground(mForegroundColor);
-        add(label);
-    }
-	
-	public void fadeIn() {
-		final Timer timer = new Timer(FADE_REFRESH_RATE, null);
-		timer.setRepeats(true);
-		timer.addActionListener(new ActionListener() {
-			private float opacity = 0;
-			public void actionPerformed(ActionEvent e) {
-				opacity += OPACITY_INCREMENT;
-				setOpacity(Math.min(opacity, MAX_OPACITY));
-				if (opacity >= MAX_OPACITY){
-					timer.stop();
-				}
+        Timeline fadeInTimeline = new Timeline();
+        KeyFrame fadeInKey1 = new KeyFrame(Duration.millis(500), new KeyValue (toast.opacityProperty(), 1)); 
+        fadeInTimeline.getKeyFrames().add(fadeInKey1);   
+        fadeInTimeline.setOnFinished(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent ae) {
+			    new Thread(new Runnable() {
+					public void run() {
+					    try
+					    {
+					        Thread.sleep(toastDelay);
+					    }
+					    catch (InterruptedException e)
+					    {
+					        e.printStackTrace();
+					    }
+					       Timeline fadeOutTimeline = new Timeline();
+					        KeyFrame fadeOutKey1 = new KeyFrame(Duration.millis(500), new KeyValue (toast.opacityProperty(), 0)); 
+					        fadeOutTimeline.getKeyFrames().add(fadeOutKey1);   
+					        fadeOutTimeline.setOnFinished(new EventHandler<ActionEvent>() {
+								public void handle(ActionEvent aeb) {
+									ownerStackPane.getChildren().remove(toast);
+								}
+							}); 
+					        fadeOutTimeline.play();
+					}
+				}).start();
 			}
-		});
-
-		setOpacity(0);
-		timer.start();
-				
-		setLocation(getToastLocation());		
-		setVisible(true);
-	}
-
-	public void fadeOut() {
-		final Timer timer = new Timer(FADE_REFRESH_RATE, null);
-		timer.setRepeats(true);
-		timer.addActionListener(new ActionListener() {
-			private float opacity = MAX_OPACITY;
-			public void actionPerformed(ActionEvent e) {
-				opacity -= OPACITY_INCREMENT;
-				setOpacity(Math.max(opacity, 0));
-				if (opacity <= 0) {
-					timer.stop();
-					setVisible(false);
-					dispose();
-				}
-			}
-		});
-
-		setOpacity(MAX_OPACITY);
-		timer.start();
-	}
-	
-	private Point getToastLocation(){
-		Point ownerLoc = mOwner.getLocation();		
-		int x = (int) (ownerLoc.getX() + ((mOwner.getWidth() - this.getWidth()) / 2));
-		int y = (int) (ownerLoc.getLocation().getY() + mOwner.getHeight() - DISTANCE_FROM_PARENT_BOTTOM);
-		return new Point(x, y);
-	}
-	
-	public void setText(String text){
-		mText = text;
-	}
-	
-	public void setDuration(int duration){
-		mDuration = duration;
-	}
-	
-	@Override
-	public void setBackground(Color backgroundColor){
-		mBackgroundColor = backgroundColor;
-	}
-	
-	@Override
-	public void setForeground(Color foregroundColor){
-		mForegroundColor = foregroundColor;
-	}
-	
-	public static Toast makeText(JFrame owner, String text){
-		return makeText(owner, text, LENGTH_SHORT);
-	}
-	
-	public static Toast makeText(JFrame owner, String text, Style style){
-		return makeText(owner, text, LENGTH_SHORT, style);
-	}
-    
-    public static Toast makeText(JFrame owner, String text, int duration){
-    	return makeText(owner, text, duration, Style.NORMAL);
+		}); 
+        fadeInTimeline.play();
     }
-    
-    public static Toast makeText(JFrame owner, String text, int duration, Style style){
-    	Toast toast = new Toast(owner);
-    	toast.mText = text;
-    	toast.mDuration = duration;
-    	
-    	if (style == Style.SUCCESS)
-    		toast.mBackgroundColor = SUCCESS_GREEN;
-    	if (style == Style.ERROR)
-    		toast.mBackgroundColor = ERROR_RED;
-    	if (style == Style.NORMAL)
-    		toast.mBackgroundColor = NORMAL_BLACK;
-    	
-    	return toast;
+	
+	public static void showProgressIndicator(final EsupNcfClientStackPane ownerStackPane) {
+		
+		waitToast.setStyle("-fx-background-color: rgba(0, 0, 0, 0.3);");
+        ownerStackPane.getChildren().add(waitToast);
     }
-        
-    public void display(){
-        new Thread(new Runnable() {
-            public void run() {
-            	try{
-            		createGUI();
-            		fadeIn();
-	                Thread.sleep(mDuration);
-	                fadeOut();
-            	}
-            	catch(Exception ex){
-            		ex.printStackTrace();
-            	}
-            }
-        }).start();
+	
+	public static void hideProgressIndicator(final EsupNcfClientStackPane ownerStackPane) {
+		ownerStackPane.getChildren().remove(waitToast);
     }
-
-    public static void main(String... args){
-    	final JFrame frame = new JFrame();
-    	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    	frame.setSize(new Dimension(800, 600));
-    	JButton b = new JButton("Toast!");
-    	
-    	b.addActionListener(new ActionListener() {		
-		public void actionPerformed(ActionEvent e) {
-			Toast.makeText(frame, "Annotations were successfully saved.", Style.SUCCESS).display();
-		}
-	});
-    	
-    	frame.add(b);
-    	frame.setVisible(true);        
-    }
+	
 }

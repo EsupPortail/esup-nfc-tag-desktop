@@ -54,44 +54,41 @@ public class EncodingService {
 	}
 	
 	public String desfireNfcComm(String cardId) throws EncodingException, PcscException {
-		String urlTest = esupNfcTagServerUrl + "/desfire-ws/?result=&numeroId="+numeroId+"&cardId="+cardId;
-		NfcResultBean nfcResultBean;
-		try{
-			nfcResultBean = restTemplate.getForObject(urlTest, NfcResultBean.class);
-		}catch (Exception e) {
-			throw new EncodingException("rest call error for : " + urlTest + " - " + e);
-		}
-		log.info("Rest call : " + urlTest);
-		log.info("Result of rest call :" + nfcResultBean);
-		if(nfcResultBean.getFullApdu()!=null) {
-			log.info("Encoding : Start");
-			String result = "";
-			while(true){
-				log.info("RAPDU : "+ result);
-				String url = esupNfcTagServerUrl + "/desfire-ws/?result="+ result +"&numeroId="+numeroId+"&cardId="+cardId;
+		NfcResultBean nfcResultBean = null;
+		log.info("Encoding : Start");
+		String result = "";
+		while(true){
+			String url = esupNfcTagServerUrl + "/desfire-ws/?result="+ result +"&numeroId="+numeroId+"&cardId="+cardId;
+			Response response = null;
+			if(result != "") {
+				String msg = result.substring(result.length() - 2);
+				response = Response.getResponse(Integer.parseInt(msg, 16));
+				log.info("RAPDU : " + result + ", with status : " + response);
+			}
+			if(response == null || response.equals(Response.OPERATION_OK) || response.equals(Response.ADDITIONAL_FRAME)) {
 				try{
 					nfcResultBean = restTemplate.getForObject(url, NfcResultBean.class);
 					log.info("SAPDU : "+ nfcResultBean.getFullApdu());
 					if(nfcResultBean.getFullApdu()!=null){
-					if(!"END".equals(nfcResultBean.getFullApdu()) ) {
-						try {
-							result = pcscUsbService.sendAPDU(nfcResultBean.getFullApdu());
-						} catch (CardException e) {
-							throw new PcscException("pcsc send apdu error", e);
+						if(!"END".equals(nfcResultBean.getFullApdu()) ) {
+							try {
+								result = pcscUsbService.sendAPDU(nfcResultBean.getFullApdu());
+							} catch (CardException e) {
+								throw new PcscException("pcsc send apdu error", e);
+							}
+						} else {
+							log.info("Encoding  : OK");
+							return nfcResultBean.getFullApdu();
 						}
-					} else {
-						log.info("Encoding  : OK");
-						return nfcResultBean.getFullApdu();
-					}
 					}else{
 						throw new EncodingException("return is null");
 					}
 				}catch (Exception e){
 					throw new EncodingException("Unknow exception on desfire comm", e);
 				}
+			} else {
+				throw new EncodingException("desfire status error : " + response);
 			}
-		} else {
-			return nfcResultBean.getFullApdu();
 		}
 	}
 	
@@ -162,4 +159,67 @@ public class EncodingService {
 	    }
 	    return data;
 	}
+	
+	public enum Response {
+		OPERATION_OK				(0x00),
+		NO_CHANGES					(0x0C),
+		OUT_OF_EEPROM_ERROR			(0x0E),
+		ILLEGAL_COMMAND_CODE		(0x1C),
+		INTEGRITY_ERROR				(0x1E),
+		NO_SUCH_KEY					(0x40),
+		LENGTH_ERROR				(0x7E),
+		PERMISSION_DENIED			(0x9D),
+
+		/** A parameter has an invalid value. */
+		PARAMETER_ERROR				(0x9E),
+
+		APPLICATION_NOT_FOUND		(0xA0),
+		APPLICATION_INTEGRITY_ERROR	(0xA1),
+
+		/** Current authentication status does not allow the requested command. */
+		AUTHENTICATION_ERROR		(0xAE),
+
+		ADDITIONAL_FRAME			(0xAF),
+		BOUNDARY_ERROR				(0xBE),
+		PICC_INTEGRITY_ERROR		(0xC1),
+
+		/** Previous command was incomplete. Not all frames were read. */
+		COMMAND_ABORTED				(0xCA),
+
+		PICC_DISABLED_ERROR			(0xCD),
+
+		/** Maximum number of applications reached. */
+		COUNT_ERROR					(0xCE),
+
+		DUPLICATE_ERROR				(0xDE),
+		EEPROM_ERROR				(0xEE),
+		FILE_NOT_FOUND				(0xF0),
+		FILE_INTEGRITY_ERROR		(0xF1),
+
+		/** Card sent back the wrong nonce. */
+		COMPROMISED_PCD				(1002),
+
+		// nfcjlib custom codes
+		WRONG_ARGUMENT				(1001),
+		UNKNOWN_CODE				(2013);
+
+		private final int code;
+
+		private Response(int code) {
+			this.code = code;
+		}
+
+		private int getCode() {
+			return this.code;
+		}
+
+		public static Response getResponse(int code) {
+			for (Response s : Response.values())
+				if (code == s.getCode())
+					return s;
+			return UNKNOWN_CODE;
+		}
+
+	}
+
 }
