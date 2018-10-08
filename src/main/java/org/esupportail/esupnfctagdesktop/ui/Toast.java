@@ -12,7 +12,6 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import javafx.scene.control.ProgressIndicator;
 
-@SuppressWarnings("restriction")
 public final class Toast
 {
 

@@ -10,15 +10,19 @@ public class JavaScriptConsoleBridge {
 		System.exit(0);
     }
 	
-    public void info(String text) {
+	public void consoleerror(String text) {
         log.info("Console Javascript : " + text);
     }
+	
+    public void info(String text) {
+        log.info("Info Javascript : " + text);
+    }
 
-    public void error(String text) {
-        log.error("Console Javascript : " + text);
+    public void windowerror(String text) {
+        log.error("Window Javascript : " + text);
     }
     
     public void warn(String text) {
-        log.warn("Console Javascript : " + text);
+        log.warn("Warn Javascript : " + text);
     }
 }

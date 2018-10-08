@@ -22,14 +22,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
+import javafx.scene.Group;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-
-@SuppressWarnings("restriction")
 public class EsupNfcTagDesktopApplication extends Application {
 	
 	private final static Logger log = Logger.getLogger(EsupNfcTagDesktopApplication.class);
@@ -62,7 +60,7 @@ public class EsupNfcTagDesktopApplication extends Application {
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
 		
-		VBox root = new VBox();
+		Group root = new Group();
 		
 		esupNfcClientStackPane = new EsupNcfClientStackPane(esupNfcTagServerUrl, getMacAddress());
 
@@ -95,7 +93,6 @@ public class EsupNfcTagDesktopApplication extends Application {
 		});
 
 		primaryStage.show();
-	    
 		launchEncodingLoop();
 		
 	}

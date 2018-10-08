@@ -15,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SuppressWarnings("restriction")
 public class EncodingService {
 
 	private final static Logger log = Logger.getLogger(EncodingService.class);

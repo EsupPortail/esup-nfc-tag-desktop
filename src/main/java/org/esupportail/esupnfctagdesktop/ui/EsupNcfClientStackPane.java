@@ -15,11 +15,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
 import javafx.scene.layout.StackPane;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 
-@SuppressWarnings("restriction")
 public class EsupNcfClientStackPane extends StackPane {
 
 	private final static Logger log = Logger.getLogger(EsupNcfClientStackPane.class);
@@ -33,28 +31,45 @@ public class EsupNcfClientStackPane extends StackPane {
 	
 	public WebView webView = new WebView();
 	
-	private WebEngine webEngine =webView.getEngine();
-
+	private JavaScriptConsoleBridge javaScriptConsoleBridge;
+	
 	public EsupNcfClientStackPane(String esupNfcTagUrl, final String macAdress) throws HeadlessException {
 		
 		esupNfcTagServerUrl = esupNfcTagUrl;
 		
 		Platform.runLater(new Runnable() {
 			public void run() {
-		        webEngine.setJavaScriptEnabled(true);
+				webView.setPrefWidth(500);
+				webView.getEngine().setJavaScriptEnabled(true);
 		        String url = esupNfcTagServerUrl + "/nfc-index?jarVersion=" + getJarVersion() + "&imei=appliJava&macAddress=" + macAdress;
 		        log.info("webView load : " + url);
-		        webEngine.load(url);
-		        
-		        webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
+                javaScriptConsoleBridge  = new JavaScriptConsoleBridge();
+                
+		        webView.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
 					public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
-						JSObject window = (JSObject) webEngine.executeScript("window");
-		                window.setMember("Android", new JavaScriptConsoleBridge());
-		                webEngine.executeScript("window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {Android.error(errorMsg)}");
+						if (newValue == State.SUCCEEDED) {
+		                    JSObject window = (JSObject) webView.getEngine().executeScript("window");
+		                    window.setMember("Android", javaScriptConsoleBridge);
+		                    webView.getEngine().executeScript("window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {Android.windowerror(errorMsg)}");
+		                    webView.getEngine().executeScript("console.error = error => {Android.consoleerror(error)};");
+
+		                }
 					}
 		        });
+
 		        
-		        webEngine.locationProperty().addListener(new ChangeListener<String>() {
+		        webView.getEngine().getLoadWorker().exceptionProperty().addListener(new ChangeListener<Throwable>() {
+		            public void changed(ObservableValue<? extends Throwable> ov, Throwable t, Throwable t1) {
+		                log.error(");Received exception: "+t1.getMessage(), t1);
+		            }
+		        });
+		        
+		        webView.getEngine().load(url);		        
+		        
+                webView.getEngine().executeScript("window");
+                
+                
+		        webView.getEngine().locationProperty().addListener(new ChangeListener<String>() {
 
 					public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 	                
@@ -62,7 +77,8 @@ public class EsupNcfClientStackPane extends StackPane {
 							if("download-jar".equals(newValue.substring(newValue.length() - 12))){
 								try {
 									FileUtils.copyURLToFile(new URL(newValue), new File("esupnfctagdesktop.jar"));
-									webEngine.loadContent("<html>Téléchargment terminé dans le dossier de lancement du jar</html>", "text/html");
+									webView.getEngine().loadContent("<html>Téléchargment terminé dans le dossier de lancement du jar</html>", "text/html");
+									webView.setPrefWidth(500);
 								} catch (IOException e) {
 									log.error("jar download error", e);
 								}
@@ -81,7 +97,7 @@ public class EsupNcfClientStackPane extends StackPane {
     public void readLocalStorage(){
     	Platform.runLater(new Runnable() {
     	    public void run() {
-    	    	JSObject window = (JSObject) webEngine.executeScript("window");
+    	    	JSObject window = (JSObject) webView.getEngine().executeScript("window");
     	    	numeroId = window.getMember("numeroId").toString();
     	    	eppnInit = window.getMember("eppnInit").toString();
     	    	authType = window.getMember("authType").toString();
