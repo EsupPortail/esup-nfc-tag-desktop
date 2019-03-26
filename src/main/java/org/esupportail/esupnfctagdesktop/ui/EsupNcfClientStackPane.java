@@ -29,7 +29,7 @@ public class EsupNcfClientStackPane extends StackPane {
 	private String authType;
 	private String readyToScan;
 	
-	public WebView webView = new WebView();
+	public static WebView webView = new WebView();
 	
 	private JavaScriptConsoleBridge javaScriptConsoleBridge;
 	
@@ -41,22 +41,21 @@ public class EsupNcfClientStackPane extends StackPane {
 			public void run() {
 				webView.setPrefWidth(500);
 				webView.getEngine().setJavaScriptEnabled(true);
-		        String url = esupNfcTagServerUrl + "/nfc-index?jarVersion=" + getJarVersion() + "&imei=appliJava&macAddress=" + macAdress;
-		        log.info("webView load : " + url);
                 javaScriptConsoleBridge  = new JavaScriptConsoleBridge();
-                
-		        webView.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
+                numeroId = FileLocalStorage.getItem("numeroId");
+            	String url = esupNfcTagServerUrl + "/nfc-index?numeroId=" + numeroId + "&jarVersion=" + getJarVersion() + "&imei=appliJava&macAddress=" + macAdress;
+                log.info("webView load : " + url);
+                webView.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
 					public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
 						if (newValue == State.SUCCEEDED) {
-		                    JSObject window = (JSObject) webView.getEngine().executeScript("window");
-		                    window.setMember("Android", javaScriptConsoleBridge);
+							JSObject window = (JSObject) webView.getEngine().executeScript("window");
+			                window.setMember("Android", javaScriptConsoleBridge);
 		                    webView.getEngine().executeScript("window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {Android.windowerror(errorMsg)}");
 		                    webView.getEngine().executeScript("console.error = error => {Android.consoleerror(error)};");
-
+		                    readLocalStorage();
 		                }
 					}
 		        });
-
 		        
 		        webView.getEngine().getLoadWorker().exceptionProperty().addListener(new ChangeListener<Throwable>() {
 		            public void changed(ObservableValue<? extends Throwable> ov, Throwable t, Throwable t1) {
@@ -66,9 +65,6 @@ public class EsupNcfClientStackPane extends StackPane {
 		        
 		        webView.getEngine().load(url);		        
 		        
-                webView.getEngine().executeScript("window");
-                
-                
 		        webView.getEngine().locationProperty().addListener(new ChangeListener<String>() {
 
 					public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -96,13 +92,24 @@ public class EsupNcfClientStackPane extends StackPane {
     
     public void readLocalStorage(){
     	Platform.runLater(new Runnable() {
-    	    public void run() {
-    	    	JSObject window = (JSObject) webView.getEngine().executeScript("window");
-    	    	numeroId = window.getMember("numeroId").toString();
-    	    	eppnInit = window.getMember("eppnInit").toString();
-    	    	authType = window.getMember("authType").toString();
-    	    	readyToScan = window.getMember("readyToScan").toString();
-    	    }
+			public void run() {
+		    	JSObject window = (JSObject) webView.getEngine().executeScript("window");
+			    numeroId = window.getMember("numeroId").toString();
+			    eppnInit = window.getMember("eppnInit").toString();
+			    authType = window.getMember("authType").toString();
+                if(numeroId != null && !numeroId.equals("") && !"undefined".equals(numeroId)){
+                	FileLocalStorage.setItem("numeroId", numeroId);
+                }
+			}
+    	});
+    }
+    
+    public void checkReadyToScan(){
+    	Platform.runLater(new Runnable() {
+			public void run() {
+				JSObject window = (JSObject) webView.getEngine().executeScript("window");
+				readyToScan = window.getMember("readyToScan").toString();
+			}
     	});
     }
     

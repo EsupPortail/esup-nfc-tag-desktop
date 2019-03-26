@@ -21,8 +21,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
@@ -37,7 +37,7 @@ public class EsupNfcTagDesktopApplication extends Application {
 	private static EncodingService encodingService;
 	
 	private static EsupNcfClientStackPane esupNfcClientStackPane ;
-
+	
 	public static void main(String... args) {
 		
 		Properties prop = new Properties();
@@ -98,16 +98,14 @@ public class EsupNfcTagDesktopApplication extends Application {
 	}
 	
 	public static void launchEncodingLoop() {
-		
 		Task<Void> task = new Task<Void>() {
 		    @Override 
 		    public Void call() {
-
-				while (true) {
+		    	while (true) {
 					while (true) {
 						updateParams();
 						try{
-							if (encodingService.isCardPresent() && esupNfcClientStackPane.getReadyToScan().equals("ok")) {
+							if (encodingService.numeroId != null && !encodingService.numeroId.equals("undefined") && encodingService.isCardPresent() && esupNfcClientStackPane.getReadyToScan().equals("ok")) {
 								showWaitingToast();
 								break;
 							}
@@ -116,7 +114,7 @@ public class EsupNfcTagDesktopApplication extends Application {
 							log.error(message);
 							launchToast(message);
 						}
-						Utils.sleep(1000);
+						Utils.sleep(2000);
 					}
 		
 					try {
@@ -128,7 +126,6 @@ public class EsupNfcTagDesktopApplication extends Application {
 						} else {
 							encodingResult = encodingService.desfireNfcComm(csn);
 						}
-						esupNfcClientStackPane.getReadyToScan();
 						if ("END".equals(encodingResult)) {
 							playSound("success.wav");
 							log.info("Encoding :  OK");
@@ -195,19 +192,10 @@ public class EsupNfcTagDesktopApplication extends Application {
 	}
 	
 	private static void updateParams() {
-		while (true) {
-			esupNfcClientStackPane.readLocalStorage();
-			encodingService.numeroId = esupNfcClientStackPane.getNumeroId();
-			encodingService.eppnInit = esupNfcClientStackPane.getEppnInit();
-			encodingService.authType = esupNfcClientStackPane.getAuthType();
-
-			if (encodingService.numeroId == null || encodingService.numeroId.equals("undefined")) {
-				Utils.sleep(1000);
-				continue;
-			} else {
-				break;
-			}
-		}
+		esupNfcClientStackPane.checkReadyToScan();
+		encodingService.numeroId = esupNfcClientStackPane.getNumeroId();
+		encodingService.eppnInit = esupNfcClientStackPane.getEppnInit();
+		encodingService.authType = esupNfcClientStackPane.getAuthType();
 		log.trace("numeroId = " + encodingService.numeroId);
 		log.trace("eppnInit = " + encodingService.eppnInit);
 		log.trace("authType = " + encodingService.authType);

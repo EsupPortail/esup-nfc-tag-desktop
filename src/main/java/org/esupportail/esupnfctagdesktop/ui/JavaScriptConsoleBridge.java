@@ -7,6 +7,8 @@ public class JavaScriptConsoleBridge {
 	private final static Logger log = Logger.getLogger(JavaScriptConsoleBridge.class);
 
 	public void disconnect() {
+		log.info("Javascript exit !");
+		FileLocalStorage.removeItem("numeroId");
 		System.exit(0);
     }
 	
