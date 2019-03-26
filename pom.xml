@@ -9,7 +9,7 @@
 	<name>esupnfctagdesktop</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-		<spring.version>4.3.17.RELEASE</spring.version>
+		<spring.version>4.3.18.RELEASE</spring.version>
 	</properties>
 	<repositories>
 		<repository>
