@@ -114,7 +114,7 @@
                 <version>2.2</version>
 
                 <configuration>
-                    <finalName>esupnfctagdesktop</finalName>
+                    <finalName>esupnfctagdesktop-final</finalName>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
