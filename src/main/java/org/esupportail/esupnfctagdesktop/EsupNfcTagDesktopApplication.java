@@ -126,7 +126,7 @@ public class EsupNfcTagDesktopApplication extends Application {
 						} else {
 							encodingResult = encodingService.desfireNfcComm(csn);
 						}
-						if ("END".equals(encodingResult)) {
+						if (encodingService.authType.equals("CSN") || "END".equals(encodingResult)) {
 							playSound("success.wav");
 							log.info("Encoding :  OK");
 						} else {
