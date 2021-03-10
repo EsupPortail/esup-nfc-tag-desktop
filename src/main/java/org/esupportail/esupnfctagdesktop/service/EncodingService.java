@@ -79,13 +79,19 @@ public class EncodingService {
 							log.info("Encoding  : OK");
 							return nfcResultBean.getFullApdu();
 						}
-					}else{
+					} else {
 						throw new EncodingException("return is null");
 					}
-				}catch (Exception e){
+				} catch (Exception e){
 					throw new EncodingException("Unknow exception on desfire comm", e);
 				}
 			} else {
+				try{
+					// send apdu result even if it's an error (like auth error) so that desfire session will be reset on esup-nfc-tag-server
+					nfcResultBean = restTemplate.getForObject(url, NfcResultBean.class);
+				} catch (Exception e){
+					throw new EncodingException("Unknow exception on desfire comm", e);
+				}
 				throw new EncodingException("desfire status error : " + response);
 			}
 		}
