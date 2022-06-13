@@ -1,7 +1,8 @@
-.classpath
-.project
-.settings/
-target/
-.idea/
-localStorage
-
+*
+!.gitignore
+!src/
+!src/**
+!LICENCE
+!README.md
+!NOTICE
+!pom.xml
