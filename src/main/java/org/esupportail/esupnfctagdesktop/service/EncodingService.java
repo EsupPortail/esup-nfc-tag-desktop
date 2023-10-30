@@ -92,7 +92,13 @@ public class EncodingService {
 				} catch (Exception e){
 					throw new EncodingException("Unknow exception on desfire comm", e);
 				}
-				throw new EncodingException("desfire status error : " + response);
+				if(NfcResultBean.CODE.CONTINUE.equals(nfcResultBean.getCode())) {
+					log.warn("desfire status error - but esup-nfc-tag-server requests to continue : " + response);
+					// result to empty to restart fresh apdus sequence...
+					result = "";
+				} else {
+					throw new EncodingException("desfire status error : " + response);
+				}
 			}
 		}
 	}

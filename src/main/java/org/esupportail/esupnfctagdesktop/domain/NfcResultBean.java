@@ -12,7 +12,8 @@ public class NfcResultBean implements Serializable {
 	public static enum CODE {
         ERROR,
         OK,
-        END
+        END,
+		CONTINUE
     }
 
     private CODE code;
