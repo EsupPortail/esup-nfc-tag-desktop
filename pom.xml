@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.esupportail.esupnfctagdesktop</groupId>
     <artifactId>esupnfctagdesktop</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.5</version>
     <packaging>jar</packaging>
     <name>esupnfctagdesktop</name>
     <url>http://maven.apache.org</url>
@@ -41,11 +41,6 @@
             <groupId>io.github.jnasmartcardio</groupId>
             <artifactId>jnasmartcardio</artifactId>
             <version>0.2.7</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.reload4j</groupId>
-            <artifactId>reload4j</artifactId>
-            <version>1.2.26</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
