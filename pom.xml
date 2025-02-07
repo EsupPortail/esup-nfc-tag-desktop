@@ -9,11 +9,11 @@
     <name>esupnfctagdesktop</name>
     <url>http://maven.apache.org</url>
     <properties>
-        <spring.version>5.3.20</spring.version>
-        <jackson.version>2.13.3</jackson.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <openjfx.version>11</openjfx.version>
+        <spring.version>6.2.2</spring.version>
+        <jackson.version>2.18.2</jackson.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <openjfx.version>17</openjfx.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
@@ -33,9 +33,9 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.4.2</version>
         </dependency>
         <dependency>
             <groupId>io.github.jnasmartcardio</groupId>
@@ -60,17 +60,17 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.16</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-reload4j</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.16</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
+            <version>2.18.0</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -114,13 +114,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.2</version>
+                <version>3.4.2</version>
                 <!-- nothing here -->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2</version>
+                <version>3.7.1</version>
 
                 <configuration>
                     <finalName>esup-nfc-tag-desktop-final</finalName>
