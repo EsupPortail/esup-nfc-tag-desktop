@@ -11,13 +11,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 public class FileLocalStorage {
 
-	private final static Logger log = Logger.getLogger(FileLocalStorage.class);
+	private final static Logger log = LoggerFactory.getLogger(FileLocalStorage.class);
 
 	private static File file = initLocalStorageFile();
 

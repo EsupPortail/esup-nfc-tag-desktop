@@ -1,10 +1,11 @@
 package org.esupportail.esupnfctagdesktop.ui;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JavaScriptConsoleBridge {
 	
-	private final static Logger log = Logger.getLogger(JavaScriptConsoleBridge.class);
+	private final static Logger log = LoggerFactory.getLogger(JavaScriptConsoleBridge.class);
 
 	public void disconnect() {
 		log.info("Javascript exit !");

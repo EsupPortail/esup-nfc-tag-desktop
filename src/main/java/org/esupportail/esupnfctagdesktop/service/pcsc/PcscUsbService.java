@@ -13,14 +13,14 @@ import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
 import javax.smartcardio.TerminalFactory;
 
-import org.apache.log4j.Logger;
-
 import jnasmartcardio.Smartcardio;
 import jnasmartcardio.Smartcardio.JnaPCSCException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PcscUsbService {
 
-	private final static Logger log = Logger.getLogger(PcscUsbService.class);
+	private final static Logger log = LoggerFactory.getLogger(PcscUsbService.class);
 	
 	private Card card;
 	private CardTerminal cardTerminal;

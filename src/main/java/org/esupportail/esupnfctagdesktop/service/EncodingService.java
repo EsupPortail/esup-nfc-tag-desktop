@@ -2,12 +2,13 @@ package org.esupportail.esupnfctagdesktop.service;
 
 import javax.smartcardio.CardException;
 
-import org.apache.log4j.Logger;
 import org.esupportail.esupnfctagdesktop.domain.CsnMessageBean;
 import org.esupportail.esupnfctagdesktop.domain.NfcResultBean;
 import org.esupportail.esupnfctagdesktop.service.pcsc.PcscException;
 import org.esupportail.esupnfctagdesktop.service.pcsc.PcscUsbService;
 import org.esupportail.esupnfctagdesktop.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class EncodingService {
 
-	private final static Logger log = Logger.getLogger(EncodingService.class);
+	private final static Logger log = LoggerFactory.getLogger(EncodingService.class);
 	
 	private String esupNfcTagServerUrl;
 	public String numeroId;

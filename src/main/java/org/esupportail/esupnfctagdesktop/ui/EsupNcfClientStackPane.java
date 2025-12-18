@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -17,10 +16,12 @@ import javafx.concurrent.Worker.State;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EsupNcfClientStackPane extends StackPane {
 
-	private final static Logger log = Logger.getLogger(EsupNcfClientStackPane.class);
+	private final static Logger log = LoggerFactory.getLogger(EsupNcfClientStackPane.class);
 	
 	private String esupNfcTagServerUrl;
 	

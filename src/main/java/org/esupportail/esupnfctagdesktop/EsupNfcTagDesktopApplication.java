@@ -7,7 +7,6 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.esupportail.esupnfctagdesktop.service.EncodingException;
 import org.esupportail.esupnfctagdesktop.service.EncodingService;
 import org.esupportail.esupnfctagdesktop.service.pcsc.PcscException;
@@ -27,10 +26,12 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EsupNfcTagDesktopApplication extends Application {
 	
-	private final static Logger log = Logger.getLogger(EsupNfcTagDesktopApplication.class);
+	private final static Logger log = LoggerFactory.getLogger(EsupNfcTagDesktopApplication.class);
 	
 	private static String esupNfcTagServerUrl;
 	
