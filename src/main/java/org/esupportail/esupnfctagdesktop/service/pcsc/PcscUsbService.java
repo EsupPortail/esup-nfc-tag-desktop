@@ -1,22 +1,12 @@
 package org.esupportail.esupnfctagdesktop.service.pcsc;
 
-import java.security.Security;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.smartcardio.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.smartcardio.Card;
-import javax.smartcardio.CardException;
-import javax.smartcardio.CardTerminal;
-import javax.smartcardio.CardTerminals;
-import javax.smartcardio.CommandAPDU;
-import javax.smartcardio.ResponseAPDU;
-import javax.smartcardio.TerminalFactory;
-
-import jnasmartcardio.Smartcardio;
-import jnasmartcardio.Smartcardio.JnaPCSCException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PcscUsbService {
 
@@ -28,9 +18,8 @@ public class PcscUsbService {
 	public CardTerminals terminals;
 	
 	public PcscUsbService() {
-		Security.addProvider(new Smartcardio());
 		try {
-			context = TerminalFactory.getInstance("PC/SC", null, Smartcardio.PROVIDER_NAME);
+			context = TerminalFactory.getInstance("PC/SC", null);
 			terminals = context.terminals();
 		} catch (Exception e) {
 			log.error("Exception retrieving context", e);
@@ -45,10 +34,10 @@ public class PcscUsbService {
 		for (CardTerminal terminal : terminals.list()) {
 			if(!terminal.getName().contains("6121") && !terminal.getName().contains("SAM Reader") && terminal.isCardPresent()){
 				cardTerminal = terminal;
-				try{
+				try {
 					card = cardTerminal.connect("*");
 					return cardTerminal.getName();
-				}catch(JnaPCSCException e){
+				} catch(Exception e){
 					log.error("pcsc connection error", e);
 				}
 			}
